@@ -1,4 +1,4 @@
-var score=0;
+var score = 0;
 var board;
 var rows = 4;
 var columns = 4;
@@ -8,18 +8,18 @@ window.onload = function () {
 }
 
 function setGame() {
-    // board = [ 
-    //     [0,0,0,0],
-    //     [0,0,0,0],
-    //     [0,0,0,0],
-    //     [0,0,0,0]
-    // ]
     board = [
-        [2, 2, 2, 2],
-        [2, 2, 2, 2],
-        [4, 4, 8, 8],
-        [4, 4, 8, 8]
+        [0, 0, 0, 2],
+        [0, 0, 0, 2],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0]
     ]
+    // board = [
+    //     [2, 2, 2, 2],
+    //     [2, 2, 2, 2],
+    //     [4, 4, 8, 8],
+    //     [4, 4, 8, 8]
+    // ]
     for (let r = 0; r < rows; r++) {
         for (let c = 0; c < columns; c++) {
             let tile = document.createElement("div");
@@ -28,6 +28,43 @@ function setGame() {
             updateTile(tile, num);
             document.getElementById("board").append(tile);
 
+        }
+    }
+    setNum();
+    setNum();
+}
+function hasEmptyTile(){
+    for (let r= 0;r,rows;r++){
+        for (let c=0;c<columns;c++){
+            if (board[r][c]==0){
+                return true;
+            }
+        }
+    }
+}
+function setNum() {
+    if (!hasEmptyTile()) {
+        return;
+    }
+    let found = false;
+    while (!found) {
+        // Generate random row and column indices
+        let r = Math.floor(Math.random() * rows);
+        let c = Math.floor(Math.random() * columns);
+
+        // Check if the selected tile is empty
+        if (board[r][c] === 0) {
+            // Randomly choose between placing a 2 or a 4
+            let value = Math.random() < 0.9 ? 2 : 4; // 90% chance for 2, 10% chance for 4
+            board[r][c] = value;
+
+            // Update the DOM to reflect the new number and styling
+            let tile = document.getElementById(r.toString() + "-" + c.toString());
+            tile.innerText = value.toString();
+            tile.className = "tile"; // Reset class list
+            tile.classList.add("x" + value); // Add specific class for 2 or 4
+
+            found = true;
         }
     }
 }
@@ -51,12 +88,28 @@ document.addEventListener("keyup", (e) => {
     if (e.code == "ArrowLeft") {
 
         slideLeft();
+        setNum();
+
     }
     else if (e.code == "ArrowRight") {
 
         slideRight();
-    }
+        setNum();
 
+    }
+    else if (e.code == "ArrowUp") {
+
+        slideUp();
+        setNum();
+
+    }
+    else if (e.code == "ArrowDown") {
+
+        slideDown();
+        setNum();
+
+    }
+document.getElementById("score").innerText = score;
 })
 
 function filterZero(row) {
@@ -66,7 +119,7 @@ function filterZero(row) {
 
 function slide(row) {
     row = filterZero(row);
-    for (let i = 0; i < row.length-1; i++)
+    for (let i = 0; i < row.length - 1; i++)
         if (row[i] == row[i + 1]) {
             row[i] *= 2;
             row[i + 1] = 0;
@@ -110,6 +163,35 @@ function slideRight() {
             let num = board[r][c];
             updateTile(tile, num);
 
+        }
+    }
+}
+
+function slideUp() {
+    for (let c = 0; c < columns; c++) {
+        let row = [board[0][c], board[1][c], board[2][c], board[3][c]];
+        row = slide(row);
+
+        for (let r = 0; r < rows; r++) {
+            board[r][c] = row[r];
+            let tile = document.getElementById(r.toString() + "-" + c.toString());
+            let num = board[r][c];
+            updateTile(tile, num);
+        }
+    }
+}
+function slideDown() {
+    for (let c = 0; c < columns; c++) {
+        let row = [board[0][c], board[1][c], board[2][c], board[3][c]];
+        row.reverse();
+        row = slide(row);
+        row.reverse();
+
+        for (let r = 0; r < rows; r++) {
+            board[r][c] = row[r];
+            let tile = document.getElementById(r.toString() + "-" + c.toString());
+            let num = board[r][c];
+            updateTile(tile, num);
         }
     }
 }
