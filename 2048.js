@@ -9,17 +9,12 @@ window.onload = function () {
 
 function setGame() {
     board = [
-        [0, 0, 0, 2],
-        [0, 0, 0, 2],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
         [0, 0, 0, 0],
         [0, 0, 0, 0]
     ]
-    // board = [
-    //     [2, 2, 2, 2],
-    //     [2, 2, 2, 2],
-    //     [4, 4, 8, 8],
-    //     [4, 4, 8, 8]
-    // ]
+   
     for (let r = 0; r < rows; r++) {
         for (let c = 0; c < columns; c++) {
             let tile = document.createElement("div");
@@ -85,32 +80,31 @@ function updateTile(tile, num) {
 }
 
 document.addEventListener("keyup", (e) => {
-    if (e.code == "ArrowLeft") {
-
-        slideLeft();
-        setNum();
-
+    if (["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(e.code)) {
+        let initialBoard = board.map(row => row.slice()); // Creates a deep copy of the board
+        switch (e.code) {
+            case "ArrowLeft":
+                slideLeft();
+                break;
+            case "ArrowRight":
+                slideRight();
+                break;
+            case "ArrowUp":
+                slideUp();
+                break;
+            case "ArrowDown":
+                slideDown();
+                break;
+        }
+        if (!boardsAreEqual(initialBoard, board)) {
+            setNum();
+        }
     }
-    else if (e.code == "ArrowRight") {
-
-        slideRight();
-        setNum();
-
-    }
-    else if (e.code == "ArrowUp") {
-
-        slideUp();
-        setNum();
-
-    }
-    else if (e.code == "ArrowDown") {
-
-        slideDown();
-        setNum();
-
-    }
-document.getElementById("score").innerText = score;
-})
+    document.getElementById("score").innerText = score;
+});
+function boardsAreEqual(initialBoard, currentBoard) {
+    return initialBoard.every((row, r) => row.every((cell, c) => cell === currentBoard[r][c]));
+}
 
 function filterZero(row) {
     return row.filter(num => num != 0);//create new arrayt 
@@ -181,6 +175,7 @@ function slideUp() {
     }
 }
 function slideDown() {
+    
     for (let c = 0; c < columns; c++) {
         let row = [board[0][c], board[1][c], board[2][c], board[3][c]];
         row.reverse();
@@ -194,4 +189,15 @@ function slideDown() {
             updateTile(tile, num);
         }
     }
+}
+function checkIfChanged(initialBoard, currentBoard) {
+    // Compare the initial and current states of the board
+    for (let r = 0; r < initialBoard.length; r++) {
+        for (let c = 0; c < initialBoard[r].length; c++) {
+            if (initialBoard[r][c] !== currentBoard[r][c]) {
+                return false; // Return true if any changes are found
+            }
+        }
+    }
+    return true; // Return false if no changes are found
 }
