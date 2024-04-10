@@ -102,6 +102,25 @@ document.addEventListener("keyup", (e) => {
     }
     document.getElementById("score").innerText = score;
 });
+document.addEventListener('DOMContentLoaded', function () {
+    document.getElementById('restartButton').addEventListener('click', resetBoard);
+});
+
+
+function resetBoard() {
+    for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < columns; c++) {
+            board[r][c] = 0;
+            updateTile(document.getElementById(r.toString() + "-" + c.toString()), 0);
+        }
+    }
+    score = 0; // Reset score
+    document.getElementById("score").innerText = score;
+    setNum(); // Optionally, add two numbers to start a new game
+    setNum(); // Optionally, add two numbers to start a new game
+}
+
+
 function boardsAreEqual(initialBoard, currentBoard) {
     return initialBoard.every((row, r) => row.every((cell, c) => cell === currentBoard[r][c]));
 }
